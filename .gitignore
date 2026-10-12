@@ -1,0 +1,34 @@
+# Dependencies and builds
+node_modules/
+dist/
+*.apk
+*.aab
+
+# Android signing keys: never commit these (back them up somewhere safe instead)
+*.keystore
+*.jks
+keystore.properties
+
+# The android/ project is tracked; its build output and the web files Capacitor
+# copies in on `cap sync` are ignored by android/.gitignore.
+
+# Cloudflare (wrangler) local state and secrets
+.wrangler/
+.dev.vars
+
+# Environment. .env only holds VITE_RELAY_URL, which is public (it ships inside the
+# app), so it's tracked; put anything secret in .env.local instead.
+.env.local
+.env.*.local
+
+# Logs and tool state
+*.log
+npm-debug.log*
+.claude/
+
+# Editors and OS
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db

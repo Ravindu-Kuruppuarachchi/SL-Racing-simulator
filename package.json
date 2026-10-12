@@ -1,0 +1,30 @@
+{
+  "name": "tuk-tuk-climb",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host",
+    "build": "vite build",
+    "preview": "vite preview --host",
+    "test": "node scripts/crash-test.js && node scripts/sim-test.js",
+    "test:race": "node scripts/race-test.js",
+    "test:net": "node scripts/net-test.js",
+    "relay": "node server/dev-relay.js",
+    "apk": "vite build && cap sync android && cd android && ./gradlew assembleDebug && cp app/build/outputs/apk/debug/app-debug.apk ../tuk-tuk-climb.apk"
+  },
+  "dependencies": {
+    "@capacitor/app": "^8.1.2",
+    "@capacitor/core": "^8.5.2",
+    "@capacitor/share": "^8.0.2",
+    "@fontsource/baloo-2": "^5.3.0",
+    "planck": "^1.5.0",
+    "three": "^0.186.1"
+  },
+  "devDependencies": {
+    "@capacitor/android": "^8.5.2",
+    "@capacitor/cli": "^8.5.2",
+    "vite": "^8.3.3",
+    "ws": "^8.18.3"
+  }
+}

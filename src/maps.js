@@ -1,0 +1,273 @@
+// Map definitions: towns on the road boards, which road sections appear,
+// warning-sign labels, ground colours and the landmarks in the distance.
+// Landmark drawings live in landmarks.js; the scenery layers in render.js.
+// sky: CSS class on the game canvas (style.css); showroom: 3D home-screen scenery (showroom.js).
+
+export const MAPS = [
+  {
+    id: 'hills',
+    name: 'Hill Country',
+    route: 'Kadugannawa → Pidurutalagala',
+    tagline: "Drive up Sri Lanka's hill country",
+    towns: [
+      'Kadugannawa', 'Peradeniya', 'Gampola', 'Pussellawa', 'Ramboda',
+      'Nuwara Eliya', 'Hakgala', 'Welimada', 'Bandarawela', 'Ella',
+      'Haputale', 'Horton Plains', 'Pidurutalagala',
+    ],
+    // landmark seen in the distance as you approach each town (by town name)
+    landmarks: {
+      Kadugannawa: 'bibleRock',
+      Gampola: 'ambuluwawa',
+      Ramboda: 'rambodaFalls',
+      'Nuwara Eliya': 'postOffice',
+      Hakgala: 'hakgalaRock',
+      Ella: 'nineArch',
+      Haputale: 'adamsPeak',
+      'Horton Plains': 'worldsEnd',
+      Pidurutalagala: 'pidurutalagala',
+    },
+    // [section, weight at the start, weight at full difficulty]
+    sections: [
+      ['rolling', 5, 3],
+      ['climb', 2, 3],
+      ['drop', 0.6, 1.6],
+      ['rocky', 0.8, 2.8, 0.05],
+      ['kicker', 0.6, 2.1, 0.08],
+      ['steps', 0.4, 1.9, 0.15],
+      ['valley', 0.6, 1.8, 0.1],
+    ],
+    hard: { climb: 'Steep climb', rocky: 'Rough road', kicker: 'Jump', steps: 'Terraces', valley: 'Deep dip', drop: 'Steep descent' },
+    rocks: 'granite',
+    friction: 0.9,
+    ground: {
+      soil: ['#a65a32', '#7d4428', '#3d2416'],
+      strata: ['rgba(196, 112, 62, 0.55)', 'rgba(60, 30, 18, 0.35)', 'rgba(150, 90, 55, 0.25)'],
+      stones: ['rgba(150, 120, 100, 0.85)', 'rgba(70, 50, 40, 0.8)'],
+      verge: ['#2f7a32', '#5fb546'],
+      tuft: '#3f9a3a',
+      tufts: 0.45,
+    },
+    foreground: 'rgba(18, 48, 24, 0.92)',
+    showroom: { decor: 'hills', ground: 0x6f9c3c, fog: [12, 60] },
+  },
+  {
+    id: 'coast',
+    name: 'Galle Road',
+    route: 'Hambantota → Galle',
+    tagline: 'Cruise the south coast, past dunes and coral',
+    towns: [
+      'Hambantota', 'Ambalantota', 'Tangalle', 'Dikwella', 'Dondra', 'Matara',
+      'Mirissa', 'Weligama', 'Ahangama', 'Koggala', 'Habaraduwa', 'Unawatuna', 'Galle',
+    ],
+    landmarks: {
+      Hambantota: 'harbour',
+      Tangalle: 'mulkirigala',
+      Dikwella: 'blowhole',
+      Dondra: 'dondraLighthouse',
+      Matara: 'paraviDuwa',
+      Mirissa: 'whale',
+      Weligama: 'taprobane',
+      Koggala: 'stiltFishermen',
+      Unawatuna: 'peacePagoda',
+      Galle: 'galleFort',
+    },
+    sections: [
+      ['rolling', 4, 2],
+      ['dunes', 1.5, 2.5],
+      ['climb', 0.8, 1.8],
+      ['drop', 0.5, 1.2],
+      ['rocky', 1, 3, 0.04],
+      ['kicker', 0.8, 2.4, 0.06],
+      ['valley', 0.5, 1.5, 0.1],
+    ],
+    hard: { dunes: 'Sand dunes', climb: 'Headland', rocky: 'Coral rocks', kicker: 'Dune jump', valley: 'Lagoon dip', drop: 'Steep descent' },
+    rocks: 'coral',
+    friction: 0.85, // sand is a little looser
+    ground: {
+      soil: ['#ecd29a', '#d2ad6c', '#8f6c42'],
+      strata: ['rgba(255, 244, 214, 0.5)', 'rgba(150, 110, 60, 0.3)', 'rgba(220, 190, 140, 0.35)'],
+      stones: ['rgba(255, 250, 240, 0.9)', 'rgba(170, 120, 90, 0.6)'], // shells, buried coral
+      verge: ['#c9a463', '#f6e3b4'],
+      tuft: '#6f8f35',
+      tufts: 0.2,
+    },
+    foreground: 'rgba(16, 52, 40, 0.92)',
+    sky: 'coast',
+    showroom: { decor: 'coast', ground: 0xd6b67a, fog: [40, 160] }, // keep the sea clear
+  },
+  {
+    id: 'colombo',
+    name: 'Colombo',
+    route: 'Negombo → Colombo → Kalutara',
+    tagline: 'Weave through Colombo and the Western Province',
+    towns: [
+      'Negombo', 'Ja-Ela', 'Wattala', 'Peliyagoda', 'Pettah', 'Colombo Fort', 'Slave Island',
+      'Kollupitiya', 'Bambalapitiya', 'Wellawatte', 'Dehiwala', 'Mount Lavinia', 'Moratuwa', 'Panadura', 'Kalutara',
+    ],
+    landmarks: {
+      Negombo: 'negomboLagoon',
+      'Ja-Ela': 'muthurajawela',
+      Peliyagoda: 'kelaniBridge',
+      Pettah: 'redMosque',
+      'Colombo Fort': 'twinTowers',
+      'Slave Island': 'lotusTower',
+      Kollupitiya: 'galleFace',
+      Bambalapitiya: 'independenceHall',
+      'Mount Lavinia': 'mountLavinia',
+      Kalutara: 'kalutaraStupa',
+    },
+    sections: [
+      ['rolling', 4, 2],
+      ['bridge', 1.2, 2, 0.02],
+      ['wrecks', 0.8, 2.4, 0.04],
+      ['wetland', 1, 1.8, 0.03],
+      ['climb', 1, 1.8],
+      ['drop', 0.4, 1.2],
+      ['rocky', 0.6, 1.8, 0.06],
+      ['kicker', 0.5, 1.6, 0.08],
+      ['valley', 0.5, 1.4, 0.1],
+      ['steps', 0.3, 1.2, 0.15],
+    ],
+    hard: {
+      bridge: 'Bridge', wrecks: 'Crash ahead', wetland: 'Flooded road', rocky: 'Potholes', kicker: 'Ramp',
+      valley: 'Underpass', steps: 'Steps', climb: 'Steep climb', drop: 'Steep descent',
+    },
+    rocks: 'rubble',
+    friction: 0.95, // asphalt
+    ground: {
+      soil: ['#9a8f84', '#76695e', '#3b332d'],
+      strata: ['rgba(190, 180, 168, 0.45)', 'rgba(40, 34, 30, 0.35)', 'rgba(150, 140, 128, 0.3)'],
+      stones: ['rgba(175, 170, 160, 0.85)', 'rgba(70, 62, 56, 0.8)'], // rubble
+      verge: ['#3b3e44', '#5c6067'],
+      tuft: '#6d8f3a',
+      tufts: 0.08,
+      lanes: true, // dashed white lane line
+    },
+    foreground: 'rgba(22, 40, 30, 0.9)',
+    sky: 'city',
+    showroom: { decor: 'colombo', ground: 0x55585e, fog: [25, 110] },
+  },
+  {
+    id: 'knuckles',
+    name: 'Knuckles',
+    route: 'Kandy → Meemure',
+    tagline: 'Over the misty ridges of the Knuckles Range',
+    towns: ['Kandy', 'Kundasale', 'Digana', 'Rangala', "Corbett's Gap", 'Meemure'],
+    landmarks: {
+      Kandy: 'templeOfTooth',
+      Digana: 'victoriaDam',
+      Rangala: 'knucklesPeaks',
+      "Corbett's Gap": 'corbettsGap',
+      Meemure: 'lakegala',
+    },
+    sections: [
+      ['rolling', 4, 2],
+      ['ridge', 1.4, 2.6, 0.02],
+      ['gorge', 0.6, 1.8, 0.05],
+      ['climb', 1.2, 2.2],
+      ['drop', 0.8, 1.6],
+      ['rocky', 0.6, 2, 0.06],
+      ['kicker', 0.4, 1.4, 0.1],
+      ['valley', 0.5, 1.2, 0.1],
+    ],
+    hard: { ridge: 'Ridge', gorge: 'Gorge', climb: 'Steep climb', drop: 'Steep descent', rocky: 'Rough road', kicker: 'Jump', valley: 'Deep dip' },
+    rocks: 'granite',
+    friction: 0.88, // damp mountain road
+    ground: {
+      soil: ['#7a5236', '#553826', '#24170f'],
+      strata: ['rgba(140, 96, 64, 0.5)', 'rgba(30, 20, 14, 0.4)', 'rgba(120, 100, 80, 0.3)'],
+      stones: ['rgba(150, 150, 140, 0.85)', 'rgba(60, 55, 50, 0.8)'],
+      verge: ['#2a6232', '#4f9a48'],
+      tuft: '#3a7a3a',
+      tufts: 0.6,
+    },
+    foreground: 'rgba(16, 38, 26, 0.92)',
+    sky: 'mist',
+    showroom: { decor: 'hills', ground: 0x4f7f3a, fog: [8, 40] }, // the cloud comes down low
+  },
+  {
+    id: 'kelani',
+    name: 'Kelani Valley',
+    route: 'Avissawella → Talawakele',
+    tagline: 'Through rainforest caves, rivers and waterfalls',
+    towns: ['Avissawella', 'Yatiyantota', 'Kitulgala', 'Ginigathhena', 'Watawala', 'Hatton', 'Kotagala', 'Talawakele'],
+    landmarks: {
+      Yatiyantota: 'rafting',
+      Kitulgala: 'beliLena',
+      Ginigathhena: 'aberdeenFalls',
+      Watawala: 'carolinaFalls',
+      Hatton: 'adamsPeak',
+      Kotagala: 'devonFalls',
+      Talawakele: 'stClairs',
+    },
+    sections: [
+      ['rolling', 4, 2],
+      ['cave', 1, 2, 0.03],
+      ['ford', 1.2, 2, 0.02],
+      ['climb', 1, 2],
+      ['drop', 0.6, 1.4],
+      ['rocky', 0.8, 2.2, 0.05],
+      ['valley', 0.5, 1.4, 0.1],
+      ['kicker', 0.3, 1.2, 0.12],
+    ],
+    hard: { cave: 'Cave', ford: 'River crossing', climb: 'Steep climb', drop: 'Steep descent', rocky: 'Rough road', valley: 'Deep dip', kicker: 'Jump' },
+    rocks: 'granite',
+    friction: 0.85, // wet rainforest road
+    ground: {
+      soil: ['#6e5a3c', '#4d3d2a', '#211a12'],
+      strata: ['rgba(110, 120, 80, 0.45)', 'rgba(25, 20, 14, 0.4)', 'rgba(130, 110, 80, 0.3)'],
+      stones: ['rgba(140, 145, 135, 0.85)', 'rgba(55, 55, 50, 0.8)'],
+      verge: ['#256b30', '#58b04a'],
+      tuft: '#2f8a3a',
+      tufts: 0.7,
+    },
+    foreground: 'rgba(10, 40, 22, 0.94)',
+    sky: 'rain',
+    showroom: { decor: 'hills', ground: 0x3f7f34, fog: [14, 70] },
+  },
+  {
+    id: 'rajarata',
+    name: 'Rajarata',
+    route: 'Dambulla → Polonnaruwa',
+    tagline: 'Ancient lakes and rock fortresses of the dry zone',
+    towns: ['Dambulla', 'Kandalama', 'Inamaluwa', 'Sigiriya', 'Pidurangala', 'Habarana', 'Minneriya', 'Giritale', 'Polonnaruwa'],
+    landmarks: {
+      Dambulla: 'dambullaTemple',
+      Kandalama: 'kandalama',
+      Sigiriya: 'sigiriya',
+      Pidurangala: 'pidurangala',
+      Minneriya: 'elephants',
+      Giritale: 'tankStumps',
+      Polonnaruwa: 'galVihara',
+    },
+    sections: [
+      ['rolling', 5, 3],
+      ['lake', 1.4, 2.2, 0.02],
+      ['ridge', 0.6, 1.6, 0.04],
+      ['rocky', 0.8, 2.4, 0.04],
+      ['climb', 0.6, 1.4],
+      ['drop', 0.4, 1.2],
+      ['kicker', 0.6, 2, 0.08],
+      ['valley', 0.4, 1.2, 0.1],
+    ],
+    hard: { lake: 'Tank crossing', ridge: 'Rock outcrop', rocky: 'Rocky track', climb: 'Steep climb', drop: 'Steep descent', kicker: 'Jump', valley: 'Deep dip' },
+    rocks: 'granite',
+    friction: 0.88, // loose laterite gravel
+    ground: {
+      soil: ['#b8562e', '#8a3c22', '#4a2014'],
+      strata: ['rgba(214, 120, 70, 0.5)', 'rgba(70, 25, 12, 0.35)', 'rgba(190, 110, 70, 0.3)'],
+      stones: ['rgba(200, 160, 120, 0.85)', 'rgba(90, 45, 30, 0.8)'], // laterite nodules
+      verge: ['#8a7f3a', '#c2b062'], // sun-dried grass
+      tuft: '#8a8a3a',
+      tufts: 0.3,
+    },
+    foreground: 'rgba(40, 46, 20, 0.9)',
+    sky: 'dry',
+    showroom: { decor: 'rajarata', ground: 0xb07040, fog: [30, 120] },
+  },
+];
+
+// A town board every this many metres; races use them as checkpoints.
+export const TOWN_EVERY = 250;
+
+export const getMap = (id) => MAPS.find((m) => m.id === id) ?? MAPS[0];
