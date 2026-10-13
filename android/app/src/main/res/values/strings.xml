@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">Tuk Tuk Climb</string>
-    <string name="title_activity_main">Tuk Tuk Climb</string>
-    <string name="package_name">lk.tuktukclimb.game</string>
-    <string name="custom_url_scheme">lk.tuktukclimb.game</string>
+    <string name="app_name">SL Racing</string>
+    <string name="title_activity_main">SL Racing</string>
+    <string name="package_name">lk.slracing.game</string>
+    <string name="custom_url_scheme">lk.slracing.game</string>
 </resources>

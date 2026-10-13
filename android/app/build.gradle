@@ -4,7 +4,7 @@ android {
     namespace = "lk.tuktukclimb.game"
     compileSdk = rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "lk.tuktukclimb.game"
+        applicationId "lk.slracing.game" // its own app: installs beside Tuk Tuk Climb (the code package stays lk.tuktukclimb.game)
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

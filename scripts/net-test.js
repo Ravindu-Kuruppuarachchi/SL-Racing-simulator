@@ -126,6 +126,27 @@ h2.ws.close();
 check(await until(() => f2.away.has(h2.id)), 'a host that drops is away at first');
 check(await until(() => f2Left, 4000), "and once it's been gone past the grace period, friends hear the host left");
 
+// SL Racing rooms are separate from Tuk Tuk Climb's, and carry 3D poses and power-ups
+const rcode = newCode();
+const climbHost = new Lobby({ code: rcode, role: 'host', me: { vehicle: 'jeep', skin: 'green' }, map: 'hills', url });
+await until(() => climbHost.players.length === 1);
+const wrongGame = new Lobby({ code: rcode, role: 'join', game: 'racer', me: { vehicle: 'van', skin: 'pearl' }, url });
+let wrongErr = null;
+wrongGame.on('error', (m) => (wrongErr = m));
+check(await until(() => wrongErr !== null), "an SL Racing player can't join a Tuk Tuk Climb room with the same code");
+const racerHost = new Lobby({ code: rcode, role: 'host', game: 'racer', me: { vehicle: 'jeep', skin: 'green' }, map: 'coast', url });
+await until(() => racerHost.players.length === 1);
+const racerFriend = new Lobby({ code: rcode, role: 'join', game: 'racer', me: { vehicle: 'bike', skin: 'red' }, url });
+check(await until(() => racerHost.players.length === 2 && racerFriend.map === 'coast') && climbHost.players.length === 1, 'the same code hosts an SL Racing room alongside it');
+let pose3d = null;
+let item = null;
+racerHost.on('pose3d', (id, m) => (pose3d = m));
+racerHost.on('item', (id, kind) => (item = kind));
+racerFriend.send({ t: 'p3', s: 512.5, d: -1.2, psi: 0.05, v: 31, y: 4.2, grounded: true });
+racerFriend.send({ t: 'it', kind: 'rocket' });
+check(await until(() => pose3d?.s === 512.5 && item === 'rocket'), '3D poses and power-ups reach the other phone');
+[climbHost, racerHost, racerFriend].forEach((l) => l.close());
+
 host.close();
 let hostLeft = 0;
 friends.forEach((f) => f.on('host-left', () => hostLeft++));

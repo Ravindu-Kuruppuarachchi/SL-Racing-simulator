@@ -392,7 +392,7 @@ export class Showroom {
     this.vehicleId = id;
     this.vehicleKey = key;
     this.turntable.clear();
-    const model = vehicleModel(id, skin);
+    const model = (this.modelOf ?? vehicleModel)(id, skin); // SL Racing sets its own cars' models
     this.turntable.add(model);
     this.model = model;
     if (repaint) this.bounce = 1;

@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+    <meta name="theme-color" content="#1e2b3a" />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏁</text></svg>" />
+    <title>SL Racing</title>
+    <link rel="stylesheet" href="/src/racer/racer.css" />
+  </head>
+  <body>
+    <canvas id="view"></canvas>
+    <canvas id="stage"></canvas>
+
+    <!-- ===== home ===== -->
+    <section id="home" class="menu" hidden>
+      <header class="topbar">
+        <div class="pill"><span class="coin">Rs</span> <b class="js-coins">0</b></div>
+        <div id="best-pill" class="pill"></div>
+        <button id="mute-btn" class="round-btn" aria-label="Toggle sound"></button>
+      </header>
+      <div class="brand">
+        <h1>SL <span>Racing</span></h1>
+        <p id="home-tag"></p>
+      </div>
+      <div id="home-slot" class="stage-slot">
+        <button class="nav-btn prev" data-cycle="-1" aria-label="Previous vehicle">‹</button>
+        <button class="nav-btn next" data-cycle="1" aria-label="Next vehicle">›</button>
+      </div>
+      <div class="home-vehicle"><b id="home-name"></b><span id="home-stats"></span></div>
+      <button id="map-open" class="map-current" aria-label="Choose a road">
+        <span><b id="map-name"></b><small id="map-route"></small></span>
+        <em>Change ›</em>
+      </button>
+      <div class="home-actions">
+        <button id="garage-open" class="btn secondary">🔧 Garage</button>
+        <button id="race-btn" class="btn primary">🏁 Race</button>
+      </div>
+      <div class="home-more">
+        <button id="free-btn" class="chip-btn">🛣️ Free drive</button>
+        <button id="friends-btn" class="chip-btn">👥 Race friends</button>
+      </div>
+    </section>
+
+    <!-- ===== garage ===== -->
+    <section id="garage" class="menu dark" hidden>
+      <header class="topbar">
+        <button id="garage-back" class="btn ghost">‹ Home</button>
+        <h2>Garage</h2>
+        <div class="pill"><span class="coin">Rs</span> <b class="js-coins">0</b></div>
+      </header>
+      <div class="garage-body">
+        <div class="garage-view">
+          <div id="garage-slot" class="stage-slot">
+            <button class="nav-btn prev" data-cycle="-1" aria-label="Previous vehicle">‹</button>
+            <button class="nav-btn next" data-cycle="1" aria-label="Next vehicle">›</button>
+            <div id="lock-badge" class="lock-badge" hidden>🔒 Locked</div>
+          </div>
+          <div id="vehicle-tabs" class="tabs" role="tablist"></div>
+        </div>
+        <aside class="garage-panel">
+          <div class="g-head"><h3 id="g-name"></h3><span id="g-status" class="chip"></span></div>
+          <div id="g-stats" class="stat-list"></div>
+          <h4>Paint</h4>
+          <div id="g-paints" class="swatches" role="radiogroup" aria-label="Paint"></div>
+          <h4>Upgrades</h4>
+          <div id="g-upgrades" class="upgrade-list"></div>
+          <button id="g-action" class="btn primary"></button>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ===== roads ===== -->
+    <section id="maps" class="menu opaque" hidden>
+      <header class="topbar">
+        <button id="maps-back" class="btn ghost">‹ Home</button>
+        <h2>Choose a road</h2>
+        <div class="pill"><span class="coin">Rs</span> <b class="js-coins">0</b></div>
+      </header>
+      <div id="map-list" class="map-list" role="radiogroup" aria-label="Roads"></div>
+    </section>
+
+    <!-- ===== race friends ===== -->
+    <section id="lobby" class="menu opaque" hidden>
+      <header class="topbar">
+        <button id="lobby-back" class="btn ghost">‹ Home</button>
+        <h2>Race friends</h2>
+        <div class="pill"><span class="coin">Rs</span> <b class="js-coins">0</b></div>
+      </header>
+      <div class="lobby">
+        <div id="lobby-choose" class="card">
+          <button id="host-btn" class="btn primary">Host a race</button>
+          <p class="muted">or join a friend's race</p>
+          <form id="join-form" class="join-form">
+            <input id="join-code" maxlength="60" placeholder="Race code" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Race code" />
+            <button class="btn secondary">Join</button>
+          </form>
+          <p id="lobby-error" class="error" hidden></p>
+        </div>
+        <div id="lobby-room" class="card" hidden>
+          <div class="room-code"><small>Race code</small><b id="room-code"></b></div>
+          <button id="share-btn" class="btn secondary">Share link</button>
+          <div class="room-map">
+            <button id="map-prev" class="nav-btn inline" aria-label="Previous road">‹</button>
+            <span><b id="room-map"></b><small id="room-route"></small></span>
+            <button id="map-next" class="nav-btn inline" aria-label="Next road">›</button>
+          </div>
+          <ol id="room-players" class="room-players"></ol>
+          <button id="room-start" class="btn primary">Start race ▶</button>
+          <p id="room-wait" class="muted">Waiting for the host to start…</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== race HUD ===== -->
+    <div id="hud" hidden>
+      <div class="hud-left">
+        <div id="hud-pos" class="hud-pos"></div>
+        <div class="hud-time" id="hud-time">0:00.0</div>
+      </div>
+      <div class="hud-progress">
+        <div class="hud-towns"><span id="hud-town"></span><span id="hud-dist"></span></div>
+        <div id="hud-track" class="hud-track"></div>
+      </div>
+      <div class="hud-right">
+        <div class="hud-coins"><span class="coin">Rs</span> <b id="hud-coins">0</b></div>
+        <button id="pause-btn" class="icon-btn" aria-label="Pause">❚❚</button>
+      </div>
+    </div>
+    <div id="speed" class="speed" hidden><b id="hud-speed">0</b><small>km/h</small></div>
+    <div id="toasts"></div>
+    <div id="countdown" class="countdown" hidden></div>
+
+    <!-- touch controls: steer on the left, power-up and brake on the right -->
+    <div id="controls" hidden>
+      <div class="steer">
+        <button id="left" class="pad" aria-label="Steer left">◀</button>
+        <button id="right" class="pad" aria-label="Steer right">▶</button>
+      </div>
+      <div class="act">
+        <button id="fire" class="item-btn empty" aria-label="Use power-up"><span id="item-icon">·</span></button>
+        <button id="brake" class="pad brake" aria-label="Brake">BRAKE</button>
+      </div>
+    </div>
+
+    <section id="pause" class="screen" hidden>
+      <div class="panel">
+        <h2>Paused</h2>
+        <button id="resume-btn" class="btn primary">Resume</button>
+        <button id="quit-btn" class="link-btn">Quit</button>
+      </div>
+    </section>
+
+    <section id="over" class="screen" hidden>
+      <div class="panel">
+        <h2 id="over-title">Finished</h2>
+        <p class="result" id="over-time"></p>
+        <p id="over-best" class="new-best" hidden>New best time!</p>
+        <ol id="over-standings" class="standings"></ol>
+        <p class="earned">+<span class="coin">Rs</span> <b id="over-coins">0</b></p>
+        <button id="again-btn" class="btn primary">Race again</button>
+        <div class="over-links"><button id="home-btn" class="link-btn">Home</button><button id="garage-btn" class="link-btn">Garage</button></div>
+      </div>
+    </section>
+
+    <script type="module" src="/src/racer/main.js"></script>
+  </body>
+</html>

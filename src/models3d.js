@@ -170,6 +170,8 @@ function addWheels(group, vehicle, style, width, zs) {
     for (const z of zs[i]) {
       const wh = wheel(w.r, width, style);
       wh.position.set(w.x, w.y, z);
+      wh.name = 'wheel'; // the 3D racer spins (and steers) these
+      wh.userData = { r: w.r, front: i === vehicle.wheels.length - 1 };
       group.add(wh);
     }
   });

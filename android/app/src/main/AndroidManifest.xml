@@ -23,12 +23,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
-            <!-- race links: https://<relay>/join/CODE opens tuktukclimb://join/CODE -->
+            <!-- race links: https://<relay>/race/CODE opens slracing://join/CODE -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="tuktukclimb" android:host="join" />
+                <data android:scheme="slracing" android:host="join" />
             </intent-filter>
 
         </activity>

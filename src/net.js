@@ -14,6 +14,8 @@
 //   start  {map, players}                           host: the countdown starts now
 //   p      {x, y, a}                                a racer's pose, ~15 a second
 //   fin    {time}                                   a racer crossed the line
+//   p3     {s, d, psi, v, y, ...}                   SL Racing: a car's place on the road
+//   it     {kind}                                   SL Racing: a power-up fired
 import { CODE_CHARS, MAX_PLAYERS } from '../server/room.js';
 
 export { MAX_PLAYERS };
@@ -22,7 +24,8 @@ export { MAX_PLAYERS };
 // it falls back to the local relay (node server/dev-relay.js) on the same machine.
 export const RELAY_URL = (import.meta.env?.VITE_RELAY_URL || (import.meta.env?.DEV ? `http://${location.hostname}:8787` : '')).replace(/\/$/, '');
 
-export const joinLink = (code) => `${RELAY_URL}/join/${code}`;
+/** The share link for a race code: /join/ opens Tuk Tuk Climb, /race/ opens SL Racing. */
+export const joinLink = (code, game = 'climb') => `${RELAY_URL}/${game === 'racer' ? 'race' : 'join'}/${code}`;
 
 export function newCode() {
   return Array.from({ length: 5 }, () => CODE_CHARS[Math.floor(Math.random() * CODE_CHARS.length)]).join('');
@@ -40,8 +43,9 @@ export class Lobby {
    * role: 'host' or 'join'; me: { vehicle, skin } (ids) for this phone's racer.
    * url: the relay (defaults to RELAY_URL); WS: WebSocket class (for tests).
    */
-  constructor({ code, role, me, map, url = RELAY_URL, WS = globalThis.WebSocket }) {
+  constructor({ code, role, me, map, game = 'climb', url = RELAY_URL, WS = globalThis.WebSocket }) {
     this.code = code;
+    this.game = game; // which app's rooms: 'climb' (Tuk Tuk Climb) or 'racer' (SL Racing)
     this.role = role;
     this.me = me;
     this.map = map;
@@ -71,7 +75,8 @@ export class Lobby {
 
   open() {
     const resume = this.token ? `&resume=${encodeURIComponent(this.token)}` : '';
-    const ws = (this.ws = new this.WS(`${this.url.replace(/^http/, 'ws')}/room/${this.code}?role=${this.role}${resume}`));
+    const game = this.game === 'climb' ? '' : `&game=${this.game}`;
+    const ws = (this.ws = new this.WS(`${this.url.replace(/^http/, 'ws')}/room/${this.code}?role=${this.role}${resume}${game}`));
     ws.onmessage = (e) => {
       try {
         this.receive(JSON.parse(e.data));
@@ -201,6 +206,12 @@ export class Lobby {
         break;
       case 'fin':
         if (Number.isFinite(m.time) && m.time > 0) this.emit('finish', m.from, m.time);
+        break;
+      case 'p3': // SL Racing: a car's place on the road
+        if ([m.s, m.d, m.psi, m.v, m.y].every(Number.isFinite)) this.emit('pose3d', m.from, m);
+        break;
+      case 'it': // SL Racing: a power-up fired
+        if (typeof m.kind === 'string') this.emit('item', m.from, m.kind);
         break;
     }
   }

@@ -1,20 +1,24 @@
 // Cloudflare Worker for online races. Each room code is a Durable Object holding that
 // room's WebSocket connections; the logic is in room.js. Deploy: see readme.md.
 //
-//   wss://<relay>/room/ABCDE?role=host|join   a phone joining a room
-//   https://<relay>/join/ABCDE                the page behind a shared link
+//   wss://<relay>/room/ABCDE?role=host|join[&game=racer]   a phone joining a room
+//   https://<relay>/join/ABCDE                the page behind a Tuk Tuk Climb link
+//   https://<relay>/race/ABCDE                the page behind an SL Racing link
 import { CODE_RE, RelayRoom } from './room.js';
 import { joinPage } from './join-page.js';
 
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
-    const [, kind, code] = url.pathname.match(/^\/(room|join)\/([A-Z0-9]+)$/i) ?? [];
-    if (kind === 'join') {
-      return new Response(joinPage(code.toUpperCase(), `${url.origin}${url.pathname}`), { headers: { 'content-type': 'text/html; charset=utf-8' } });
+    const [, kind, code] = url.pathname.match(/^\/(room|join|race)\/([A-Z0-9]+)$/i) ?? [];
+    if (kind === 'join' || kind === 'race') {
+      const page = joinPage(code.toUpperCase(), `${url.origin}${url.pathname}`, kind === 'race' ? 'racer' : 'climb');
+      return new Response(page, { headers: { 'content-type': 'text/html; charset=utf-8' } });
     }
     if (kind === 'room' && CODE_RE.test(code) && request.headers.get('Upgrade') === 'websocket') {
-      return env.ROOMS.get(env.ROOMS.idFromName(code)).fetch(request);
+      // each game has its own rooms, so the same code can't mix the two apps
+      const game = url.searchParams.get('game') === 'racer' ? 'racer:' : '';
+      return env.ROOMS.get(env.ROOMS.idFromName(game + code)).fetch(request);
     }
     return new Response('Tuk Tuk Climb race relay', { status: kind ? 400 : 200 });
   },

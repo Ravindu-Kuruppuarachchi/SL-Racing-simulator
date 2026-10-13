@@ -2,18 +2,23 @@
 // the installed app straight into the race; everywhere it shows the code to type in.
 import { CODE_RE } from './room.js';
 
-const APP_ID = 'lk.tuktukclimb.game'; // capacitor.config.json appId
+// Each app's id (capacitor.config.json appId) and link scheme (AndroidManifest.xml).
+const APPS = {
+  climb: { id: 'lk.tuktukclimb.game', scheme: 'tuktukclimb', name: 'Hill Rush', menu: 'Race → Race friends → Join' },
+  racer: { id: 'lk.slracing.game', scheme: 'slracing', name: 'SL Racing', menu: 'Race friends → Join' },
+};
 
-export function joinPage(code, pageUrl) {
+export function joinPage(code, pageUrl, game = 'climb') {
+  const app = APPS[game] ?? APPS.climb;
   const ok = CODE_RE.test(code);
   const fallback = encodeURIComponent(`${pageUrl}?noapp=1`);
-  const intent = `intent://join/${code}#Intent;scheme=tuktukclimb;package=${APP_ID};S.browser_fallback_url=${fallback};end`;
+  const intent = `intent://join/${code}#Intent;scheme=${app.scheme};package=${app.id};S.browser_fallback_url=${fallback};end`;
   const body = ok
     ? `<h1>Join my race!</h1>
       <p>Race code</p>
       <div class="code">${code}</div>
-      <a class="btn" href="${intent}">Open Tuk Tuk Climb</a>
-      <p class="small">No luck? Open the app, choose <b>Race → Race friends → Join</b> and type the code.</p>
+      <a class="btn" href="${intent}">Open ${app.name}</a>
+      <p class="small">No luck? Open the app, choose <b>${app.menu}</b> and type the code.</p>
       <script>if (!location.search.includes('noapp') && /Android/i.test(navigator.userAgent)) location.href = ${JSON.stringify(intent)};</script>`
     : '<h1>That link looks broken</h1><p>Ask your friend for the race code.</p>';
   return `<!doctype html>
@@ -21,7 +26,7 @@ export function joinPage(code, pageUrl) {
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Tuk Tuk Climb race</title>
+<title>${app.name} race</title>
 <style>
   :root { color-scheme: light; }
   body { margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 16px; box-sizing: border-box;

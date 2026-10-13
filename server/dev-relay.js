@@ -11,10 +11,10 @@ export function startRelay(port = 8787, { grace } = {}) {
   const rooms = new Map(); // code -> RelayRoom
   const http = createServer((req, res) => {
     const url = new URL(req.url, `http://${req.headers.host}`);
-    const [, code] = url.pathname.match(/^\/join\/([A-Z0-9]+)$/i) ?? [];
+    const [, kind, code] = url.pathname.match(/^\/(join|race)\/([A-Z0-9]+)$/i) ?? [];
     if (code) {
       res.writeHead(200, { 'content-type': 'text/html; charset=utf-8' });
-      res.end(joinPage(code.toUpperCase(), `http://${req.headers.host}${url.pathname}`));
+      res.end(joinPage(code.toUpperCase(), `http://${req.headers.host}${url.pathname}`, kind === 'race' ? 'racer' : 'climb'));
     } else {
       res.writeHead(200, { 'content-type': 'text/plain' });
       res.end('Tuk Tuk Climb race relay (dev)');
@@ -25,15 +25,16 @@ export function startRelay(port = 8787, { grace } = {}) {
     const url = new URL(req.url, 'http://x');
     const [, code] = url.pathname.match(/^\/room\/([A-Z0-9]+)$/i) ?? [];
     if (!code || !CODE_RE.test(code)) return sock.destroy();
+    const key = (url.searchParams.get('game') === 'racer' ? 'racer:' : '') + code; // each game has its own rooms
     wss.handleUpgrade(req, sock, head, (ws) => {
-      const room = rooms.get(code) ?? new RelayRoom({ grace, onEmpty: () => rooms.delete(code) });
-      rooms.set(code, room);
+      const room = rooms.get(key) ?? new RelayRoom({ grace, onEmpty: () => rooms.delete(key) });
+      rooms.set(key, room);
       const send = (text) => ws.readyState === ws.OPEN && ws.send(text);
       const joined = room.join(url.searchParams.get('role') === 'host' ? 'host' : 'join', send, url.searchParams.get('resume'));
       if (joined.error) {
         send(JSON.stringify({ t: 'error', message: joined.error }));
         ws.close(4000, 'rejected');
-        if (room.empty) rooms.delete(code);
+        if (room.empty) rooms.delete(key);
         return;
       }
       ws.on('message', (data) => room.message(joined.id, data.toString()));

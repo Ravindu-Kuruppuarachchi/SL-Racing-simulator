@@ -1,3 +1,44 @@
+> **Godot version:** `godot/` holds SL Racing rebuilt in Godot 4 with CC0 3D assets (Android APK: `sl-racing-godot.apk`). See [godot/README.md](godot/README.md).
+
+# SL Racing 🏁 (this branch)
+
+A Beach Buggy Racing–style 3D racer on the routes of Tuk Tuk Climb's six maps: each race runs
+from a map's first town to its last (up to eight towns, ~2.4 km, about 1½ minutes), through
+3D tea country, the Galle coast, Colombo, the Knuckles, the Kelani Valley and Rajarata.
+
+- Each road is built from its map's own sections, as in Tuk Tuk Climb, each with a warning
+  sign: steep climbs and descents, deep valleys and ridges (airtime), jumps, dunes, terraces,
+  rocky stretches, river fords and tank crossings, Kelani's caves, the Knuckles gorge and
+  Colombo's flyover. Obstacles block the road in rows with a gap to find: boulders, coral,
+  wrecked cars, fallen trees, potholes, flooded patches, and elephants crossing in Rajarata.
+- Every town has its landmark in 3D ahead of it (Sigiriya, Adam's Peak, the Temple of the
+  Tooth, the Lotus Tower, Dondra lighthouse, the waterfalls …), and houses, shops and lamp posts.
+- Drift boost: hold a slide through a bend, then straighten up for a burst of speed.
+- **Race** five AI rivals (you start at the back), **Free drive** a route on your own, or
+  **Race friends** online: host a room and share the link, up to six players, no bots.
+- **Power-ups** from the item boxes: Vesak Rocket (homing), Coconut Bombs (lobbed ahead),
+  Oil Slick, Shield and Nitro. Cars further back get the better ones. Boost pads and coins too.
+- **Garage**: six sporty cars (`src/racer/cars.js`): Dune Buggy (free), Rally GT, Roadster,
+  Muscle Car, Trophy Truck and Supercar, each with Engine, Handling, Tyres and Nitro upgrades
+  and paints with matching stripes. Coins come from races and the road.
+- Towns are lively: painted shopfronts with signboards, awnings and goods on the shelves,
+  houses with verandas, windows and doors, Buddhist flags and Vesak lanterns across the road,
+  roadside shrines, king coconut stalls, bus halts, parked tuk tuks and people; a crowd at the
+  start and finish. Colombo has shops all along the road.
+- Controls: steer ◀ ▶ (or ←/→, A/D), brake (↓/S), power-up (Space). You accelerate by yourself.
+
+It is its own Android app (`lk.slracing.game`, "SL Racing"), so it installs beside Tuk Tuk
+Climb; `npm run apk` builds `sl-racing.apk`. Share links are `https://<relay>/race/CODE` and
+open `slracing://join/CODE`. The relay keeps the two games' rooms apart (redeploy it from
+`server/` after pulling this branch). Tuk Tuk Climb itself lives on the `main` branch; the
+sections below describe it and the parts the two games share (vehicles, maps, relay).
+
+**Code (`src/racer/`)**: `track.js` builds each route (bends, hills, jumps, fords, the
+Kelani cave, the viaduct, item boxes, pads, coins); `car.js` is the arcade handling, in road
+coordinates; `ai.js` the AI drivers; `race3d.js` a race (power-ups, collisions, positions,
+friends' cars); `world.js` the 3D scene; `view.js` cars, effects and the chase camera;
+`main.js` the screens. `npm run test:racer` checks every route and full races headless.
+
 # Tuk Tuk Climb 🛺
 
 A Hill Climb Racing–style physics game: drive six real Sri Lankan routes, from the hill country

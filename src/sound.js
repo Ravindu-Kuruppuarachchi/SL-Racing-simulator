@@ -8,6 +8,13 @@ const PROFILES = {
   hybrid: { base: 90, range: 60, putt: 40, chop: 0.1, tone: 300, volume: 0.4 }, // mostly electric hum
   van: { base: 42, range: 65, putt: 20, chop: 0.5, tone: 400, volume: 1 }, // smooth turbo diesel
   jeep: { base: 34, range: 45, putt: 9, chop: 1, tone: 380, volume: 1.2 }, // gruff diesel
+  // SL Racing
+  buggy: { base: 60, range: 150, putt: 26, chop: 0.7, tone: 800, volume: 1 }, // buzzy flat-four
+  rally: { base: 70, range: 170, putt: 34, chop: 0.5, tone: 900, volume: 1 }, // turbo four
+  roadster: { base: 75, range: 160, putt: 38, chop: 0.35, tone: 1000, volume: 0.9 },
+  muscle: { base: 38, range: 110, putt: 16, chop: 0.9, tone: 600, volume: 1.3 }, // big V8 burble
+  truck: { base: 42, range: 100, putt: 18, chop: 0.8, tone: 550, volume: 1.3 },
+  supercar: { base: 85, range: 220, putt: 48, chop: 0.25, tone: 1300, volume: 1.1 }, // screaming V10
 };
 
 export class EngineSound {
