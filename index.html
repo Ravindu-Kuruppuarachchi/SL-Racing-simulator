@@ -42,7 +42,7 @@
       <button id="nitro" class="nitro-btn" aria-label="Nitro"><span>NITRO</span><b id="nitro-count">0</b><i id="nitro-fill"></i></button>
     </div>
 
-    <section id="cover" class="cover" hidden>
+    <div id="scenery" class="scenery" hidden>
       <svg class="cover-scene" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
         <defs>
           <linearGradient id="cv-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2fa6e6" /><stop offset="0.55" stop-color="#8fdcfa" /><stop offset="1" stop-color="#e2f7ff" /></linearGradient>
@@ -94,6 +94,10 @@
         <g fill="#5a3418" opacity="0.6"><circle cx="120" cy="790" r="14" /><circle cx="300" cy="830" r="20" /><circle cx="520" cy="780" r="12" /><circle cx="610" cy="850" r="18" /><circle cx="210" cy="870" r="10" /></g>
         <g fill="#2c6b2c"><path d="M30 720 L70 590 L110 720 Z" /><path d="M45 660 L70 560 L95 660 Z" /></g>
       </svg>
+    </div>
+
+    <section id="cover" class="cover" hidden>
+
       <div class="cv-dust"><i></i><i></i><i></i><i></i><i></i></div>
       <div class="cv-speed"><i></i><i></i><i></i></div>
       <canvas id="cover-tuk" class="cover-tuk" width="900" height="600"></canvas>
@@ -105,7 +109,7 @@
       <div class="cover-load">
         <div class="bar"><i id="cover-fill"></i></div>
         <b id="cover-pct">0%</b>
-        <small>v1.2</small>
+        <small>v1.4</small>
       </div>
       <button id="cover-play" class="cover-play" hidden>Tap to play</button>
       <button id="cover-settings" class="round-btn cover-gear" aria-label="Settings">⚙</button>

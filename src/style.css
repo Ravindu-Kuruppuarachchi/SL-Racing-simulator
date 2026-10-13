@@ -1958,3 +1958,311 @@ button {
     display: none;
   }
 }
+
+/* ---- cartoon style for the menus (matches the cover) ----------------------------- */
+:root {
+  --navy: #10213f;
+}
+.scenery {
+  position: fixed;
+  inset: 0;
+  background: #8fdcfa;
+}
+.cover {
+  background: transparent;
+}
+#home .brand h1,
+.topbar h2,
+.panel h2,
+.btn,
+.big-btn,
+.pill b,
+.home-vehicle b,
+.map-current b,
+.mode-pick button,
+.friends-btn,
+.cover-play {
+  font-family: 'Lilita One', 'Baloo 2', sans-serif;
+  font-weight: 400;
+  letter-spacing: 0.5px;
+}
+/* the logo, like the cover's */
+#home .brand h1 {
+  text-transform: uppercase;
+  color: #fff;
+  -webkit-text-stroke: 7px var(--navy);
+  paint-order: stroke fill;
+  text-shadow: 0 3px 0 var(--navy), 0 6px 0 var(--navy), 0 10px 14px rgba(0, 0, 0, 0.25);
+  transform: rotate(-3deg);
+}
+#home .brand h1 span {
+  color: #ffb627;
+}
+.topbar h2,
+.panel h2 {
+  color: #fff;
+  -webkit-text-stroke: 6px var(--navy);
+  paint-order: stroke fill;
+  text-shadow: 0 3px 0 var(--navy);
+}
+/* chunky outlined buttons */
+.btn,
+.big-btn {
+  border: 4px solid var(--navy);
+  border-radius: 20px;
+  box-shadow: 0 6px 0 var(--navy), 0 10px 18px rgba(0, 0, 0, 0.2);
+  color: #fff;
+  -webkit-text-stroke: 3px var(--navy);
+  paint-order: stroke fill;
+}
+.btn:active:not(:disabled),
+.big-btn:active {
+  transform: translateY(4px);
+  box-shadow: 0 2px 0 var(--navy);
+}
+.btn.primary,
+.big-btn {
+  background: linear-gradient(#8ff06a 0 45%, #46b82e 46%, #2f9a1f);
+}
+.btn.primary:active:not(:disabled) {
+  box-shadow: 0 2px 0 var(--navy);
+}
+.btn.secondary {
+  background: linear-gradient(#ffe27a 0 45%, #ffbf2e 46%, #f39a0c);
+}
+.btn.ghost {
+  background: #fff;
+  color: var(--navy);
+  -webkit-text-stroke: 0;
+}
+.btn:disabled {
+  filter: grayscale(0.7) brightness(0.9);
+}
+/* pills, round buttons and arrows */
+.pill {
+  background: #fff;
+  border: 3px solid var(--navy);
+  box-shadow: 0 4px 0 var(--navy);
+  color: var(--navy);
+}
+.pill small {
+  color: var(--navy);
+  opacity: 0.7;
+}
+.round-btn,
+.nav-btn {
+  background: #fff;
+  border: 4px solid var(--navy);
+  box-shadow: 0 4px 0 var(--navy);
+  color: var(--navy);
+}
+.nav-btn {
+  width: 52px;
+  height: 52px;
+  margin-top: -26px;
+  font-size: 32px;
+  background: linear-gradient(#ffe27a, #ffbf2e);
+}
+.round-btn:active,
+.nav-btn:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 var(--navy);
+}
+/* the vehicle on home: cartoon art on a grassy mound */
+#home .stage-slot .thumb {
+  inset: 4% 22% 22%;
+  width: 56%;
+  height: 74%;
+  animation: idle-bounce 0.9s ease-in-out infinite alternate;
+  filter: drop-shadow(0 10px 6px rgba(0, 40, 20, 0.3));
+}
+#home .stage-slot::after {
+  content: '';
+  position: absolute;
+  left: 24%;
+  right: 24%;
+  bottom: 6%;
+  height: 22%;
+  border-radius: 50% 50% 40% 40% / 70% 70% 30% 30%;
+  background: linear-gradient(#7cd14f 0 28%, #4e9a36 29% 34%, #b9773f 35%, #7a4a26);
+  border: 4px solid var(--navy);
+  box-shadow: 0 6px 0 rgba(16, 33, 63, 0.35);
+  z-index: -1;
+}
+@keyframes idle-bounce {
+  to {
+    transform: translateY(-4px) rotate(-1deg);
+  }
+}
+.home-vehicle b {
+  display: inline-block;
+  padding: 2px 22px 4px;
+  border: 4px solid var(--navy);
+  border-radius: 14px;
+  background: linear-gradient(#ff6b5a, #d8262b);
+  color: #fff;
+  -webkit-text-stroke: 3px var(--navy);
+  paint-order: stroke fill;
+  box-shadow: 0 4px 0 var(--navy);
+}
+.home-vehicle span {
+  color: var(--navy);
+  font-weight: 700;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+/* map, mode and friends */
+.map-current {
+  background: #fff;
+  border: 4px solid var(--navy);
+  box-shadow: 0 5px 0 var(--navy);
+  color: var(--navy);
+}
+.map-current em {
+  color: #e8701e;
+}
+.mode-pick {
+  background: #fff;
+  border: 4px solid var(--navy);
+  box-shadow: 0 5px 0 var(--navy);
+}
+.mode-pick button {
+  color: var(--navy);
+}
+.mode-pick button[aria-checked='true'] {
+  background: linear-gradient(#ffe27a 0 45%, #ffbf2e 46%, #f39a0c);
+  color: #fff;
+  -webkit-text-stroke: 3px var(--navy);
+  paint-order: stroke fill;
+  box-shadow: inset 0 0 0 3px var(--navy);
+}
+.friends-btn {
+  padding: 6px 16px;
+  border: 4px solid var(--navy);
+  border-radius: 999px;
+  background: linear-gradient(#7fd3ff, #2fa6e6);
+  color: #fff;
+  text-decoration: none;
+  -webkit-text-stroke: 3px var(--navy);
+  paint-order: stroke fill;
+  box-shadow: 0 4px 0 var(--navy);
+}
+.hint {
+  color: var(--navy);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+/* pause and results panels */
+.panel {
+  border: 5px solid var(--navy);
+  box-shadow: 0 8px 0 var(--navy), 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+.link-btn {
+  color: var(--navy);
+}
+/* home layout tweaks for the cartoon style */
+.home-vehicle {
+  background: none;
+  box-shadow: none;
+}
+.btn.secondary {
+  color: #fff;
+}
+#home .stage-slot .thumb {
+  inset: 0 26% 16%;
+  width: 48%;
+  height: 84%;
+}
+#home .stage-slot::after {
+  left: 33%;
+  right: 33%;
+  bottom: 4%;
+  height: 26%;
+}
+@media (max-height: 620px) {
+  #home .brand p,
+  #home .map-current small,
+  #home .home-vehicle span {
+    display: none;
+  }
+  #home .brand h1 {
+    font-size: 44px;
+  }
+}
+.friends-btn {
+  -webkit-text-stroke: 0;
+  text-shadow: 0 2px 0 var(--navy);
+  font-size: 17px;
+}
+@media (max-height: 620px) {
+  #home .hint {
+    display: none;
+  }
+}
+
+/* slimmer outlines */
+#home .brand h1 {
+  -webkit-text-stroke: 4px var(--navy);
+  text-shadow: 0 2px 0 var(--navy), 0 4px 0 var(--navy), 0 8px 12px rgba(0, 0, 0, 0.2);
+}
+.topbar h2,
+.panel h2 {
+  -webkit-text-stroke: 3px var(--navy);
+  text-shadow: 0 2px 0 var(--navy);
+}
+.btn,
+.big-btn {
+  border-width: 2px;
+  box-shadow: 0 4px 0 var(--navy), 0 8px 14px rgba(0, 0, 0, 0.18);
+  -webkit-text-stroke: 1.5px var(--navy);
+}
+.btn.ghost {
+  -webkit-text-stroke: 0;
+}
+.btn:active:not(:disabled),
+.big-btn:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 var(--navy);
+}
+.pill,
+.map-current,
+.mode-pick {
+  border-width: 2px;
+  box-shadow: 0 3px 0 var(--navy);
+}
+.round-btn,
+.nav-btn {
+  border-width: 2px;
+  box-shadow: 0 3px 0 var(--navy);
+}
+.home-vehicle b {
+  border-width: 2px;
+  -webkit-text-stroke: 1.5px var(--navy);
+  box-shadow: 0 3px 0 var(--navy);
+}
+.mode-pick button[aria-checked='true'] {
+  -webkit-text-stroke: 1.5px var(--navy);
+  box-shadow: inset 0 0 0 2px var(--navy);
+}
+.friends-btn {
+  border-width: 2px;
+  box-shadow: 0 3px 0 var(--navy);
+}
+#home .stage-slot::after {
+  border-width: 2px;
+  box-shadow: 0 4px 0 rgba(16, 33, 63, 0.3);
+}
+.panel {
+  border-width: 3px;
+  box-shadow: 0 5px 0 var(--navy), 0 18px 36px rgba(0, 0, 0, 0.28);
+}
+.cover-logo span {
+  -webkit-text-stroke: 0.7vmin #10213f;
+  text-shadow: 0 0.4vmin 0 #10213f, 0 0.8vmin 0 #10213f, 0 1.6vmin 1.2vmin rgba(0, 0, 0, 0.25);
+}
+.cover-play {
+  border-width: 0.35vmin;
+  -webkit-text-stroke: 0.25vmin #10213f;
+  box-shadow: 0 4px 0 #10213f, 0 10px 20px rgba(0, 0, 0, 0.28);
+}
+.cover-load .bar {
+  padding: 3px;
+}

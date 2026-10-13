@@ -50,6 +50,15 @@ export class EngineSound {
     this.lfo.start();
   }
 
+  /** The app went to the background: silence the engine until resume(). */
+  suspend() {
+    this.ctx?.suspend();
+  }
+
+  resume() {
+    this.ctx?.resume();
+  }
+
   /** Engine volume from the settings (0-1; 0 is off). */
   setVolume(v) {
     this.volume = v;
@@ -70,7 +79,7 @@ export class EngineSound {
     this.osc.frequency.setTargetAtTime(p.base + rpm * p.range + (throttle ? p.base * 0.3 : 0), t, 0.08);
     this.lfo.frequency.setTargetAtTime(p.putt + rpm * p.putt * 2, t, 0.08);
     this.filter.frequency.setTargetAtTime(p.tone, t, 0.1);
-    const vol = p.volume * this.volume * 1.25;
+    const vol = p.volume * this.volume * 2.5; // up to twice the old loudest
     this.gain.gain.setTargetAtTime(on ? (throttle ? 0.05 : 0.025) * vol : 0, t, 0.1);
     this.lfoGain.gain.setTargetAtTime(on ? 0.02 * vol * p.chop : 0, t, 0.1);
   }

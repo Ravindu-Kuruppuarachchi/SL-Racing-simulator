@@ -37,7 +37,7 @@ function load() {
   // paint: equipped skin per vehicle; paints: skins bought per vehicle (the factory paint is free)
   // mode: 'ride' (free ride) or 'race'; racing: per map { pace, wins, races, best } (see race.js)
   // settings: music and sound volume (0-1), tilt: handling sensitivity (0.5-1.5)
-  const fresh = { coins: 0, bests: {}, settings: { music: 0.6, sound: 0.8, tilt: 1 }, selected: 'tuktuk', owned: ['tuktuk'], ups: {}, map: 'hills', paint: {}, paints: {}, mode: 'ride', racing: {} };
+  const fresh = { coins: 0, bests: {}, settings: { music: 0.5, sound: 0.8, tilt: 1 }, selected: 'tuktuk', owned: ['tuktuk'], ups: {}, map: 'hills', paint: {}, paints: {}, mode: 'ride', racing: {} };
   try {
     const s = JSON.parse(localStorage.getItem(SAVE_KEY));
     if (!s) return fresh;
@@ -179,10 +179,11 @@ function show(next) {
   $('countdown').hidden = true;
   for (const el of document.querySelectorAll('.stats')) el.hidden = !!race;
   $('checkpoint-btn').hidden = !race;
-  // the 3D stage covers the game while a menu is up (if WebGL works)
-  $('stage').hidden = !(MENUS.includes(next) && showroom.ok);
+  // the cartoon scenery is behind the cover and home; the 3D stage is the garage's
+  $('scenery').hidden = !(next === 'cover' || next === 'home');
+  $('stage').hidden = !(next === 'garage' && showroom.ok);
   if (next !== 'play') sound.setLevel(0, false);
-  if (MENUS.includes(next)) {
+  if (next === 'garage') {
     showroom.setScene(next);
     showroom.setSlot($(`${next}-slot`));
   }
@@ -198,8 +199,9 @@ function show(next) {
 }
 
 // Without WebGL, show the 2D artwork in the slot instead.
+// Home shows the vehicle as cartoon art over the scenery; the garage in 3D.
 function showVehicle(id, skin = skinOf(id)) {
-  if (showroom.ok) return showroom.setVehicle(id, skin);
+  if (showroom.ok && mode !== 'home') return showroom.setVehicle(id, skin);
   const slot = $(`${mode}-slot`);
   let c = slot.querySelector('canvas');
   if (!c) {
@@ -827,13 +829,15 @@ let coverReady = false;
 function loadCover() {
   const start = performance.now();
   let ready = false;
-  Promise.all([document.fonts?.ready, new Promise((r) => setTimeout(r, 300))]).then(() => (ready = true));
+  // fonts loaded (never wait more than 2 s for them: some WebViews never report it)
+  const fonts = Promise.race([document.fonts?.ready ?? Promise.resolve(), new Promise((r) => setTimeout(r, 2000))]);
+  Promise.all([fonts, new Promise((r) => setTimeout(r, 300))]).then(() => (ready = true));
   const tick = () => {
     const t = (performance.now() - start) / 1800; // at least ~2 s, so the splash is seen
     const pct = Math.min(ready ? 100 : 92, Math.round(100 * (1 - (1 - Math.min(t, 1)) ** 2)));
     $('cover-fill').style.width = `${pct}%`;
     $('cover-pct').textContent = `${pct}%`;
-    if (pct < 100) return requestAnimationFrame(tick);
+    if (pct < 100) return setTimeout(tick, 33);
     coverReady = true;
     document.querySelector('.cover-load').hidden = true;
     $('cover-play').hidden = false;
@@ -894,7 +898,20 @@ $('set-tilt').oninput = (e) => {
 function drawCover() {
   drawVehicleThumb($('cover-tuk'), getVehicle(save.selected), skinOf(save.selected));
 }
+// In the background (home button, another app, screen off) all sound stops; it comes back
+// with the app. Capacitor reports it as appStateChange; browsers as visibilitychange.
+function backgroundAudio(hidden) {
+  if (hidden) {
+    music.suspend();
+    sound.suspend();
+  } else {
+    music.resume();
+    sound.resume();
+  }
+}
+if (Capacitor.isNativePlatform()) NativeApp.addListener('appStateChange', ({ isActive }) => backgroundAudio(!isActive));
 document.addEventListener('visibilitychange', () => {
+  backgroundAudio(document.hidden);
   if (document.hidden && mode === 'play') togglePause();
   if (!document.hidden) lobby?.wake(); // back from another app: rejoin the race room straight away
 });
@@ -972,9 +989,9 @@ function frame() {
     else if (!race && game.over) endRun();
   }
 
-  if (mode === 'maps' || mode === 'lobby' || mode === 'cover' || mode === 'settings') {
+  if (mode === 'maps' || mode === 'lobby' || mode === 'cover' || mode === 'settings' || mode === 'home') {
     // the map page is opaque: nothing to draw behind it
-  } else if (MENUS.includes(mode) && showroom.ok) showroom.render(dt);
+  } else if (mode === 'garage' && showroom.ok) showroom.render(dt);
   else {
     if (MENUS.includes(mode)) game.step({ gas: false, brake: false }); // no WebGL: the vehicle idles behind the menu
     renderer.draw(game, mode === 'play' ? input : { gas: false, brake: false }, dt, race);
