@@ -16,7 +16,7 @@ export default {
     if (kind === 'room' && CODE_RE.test(code) && request.headers.get('Upgrade') === 'websocket') {
       return env.ROOMS.get(env.ROOMS.idFromName(code)).fetch(request);
     }
-    return new Response('Tuk Tuk Climb race relay', { status: kind ? 400 : 200 });
+    return new Response('Hill Rush race relay', { status: kind ? 400 : 200 });
   },
 };
 

@@ -70,7 +70,7 @@ export class Race {
     this.done = false; // the player has crossed the line
     this.samples = []; // the player's run, for a new ghost
 
-    this.player = this.racer({ name: 'You', kind: 'player', vehicleId: player.vehicleId, upgrades: player.upgrades, skin: player.skin });
+    this.player = this.racer({ name: 'You', kind: 'player', vehicleId: player.vehicleId, upgrades: player.upgrades, skin: player.skin, tilt: player.tilt ?? 1 });
     this.online = !!online;
     this.clock = online?.clock ?? null;
     this.startClock = null;
@@ -93,8 +93,9 @@ export class Race {
     this.ghostRace = useGhost;
   }
 
-  racer({ name, kind, vehicleId, upgrades, skin }) {
-    const game = new Game(vehicleId, upgrades, this.seed, this.map.id);
+  racer({ name, kind, vehicleId, upgrades, skin, tilt = 1 }) {
+    // races have nitro but no fuel to worry about
+    const game = new Game(vehicleId, upgrades, this.seed, this.map.id, { fuel: false, tilt });
     game.skin = skin;
     game.keepBehind = TOWN_EVERY + 60; // respawning goes back to the last checkpoint
     // bestX/stuckTime spot a stuck bot; reach/fails (since the last checkpoint) a bot that keeps crashing

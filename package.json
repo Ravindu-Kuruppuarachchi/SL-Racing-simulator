@@ -7,7 +7,7 @@
     "dev": "vite --host",
     "build": "vite build",
     "preview": "vite preview --host",
-    "test": "node scripts/crash-test.js && node scripts/sim-test.js",
+    "test": "node scripts/crash-test.js && node scripts/sim-test.js && node scripts/mode-test.js",
     "test:race": "node scripts/race-test.js",
     "test:net": "node scripts/net-test.js",
     "relay": "node server/dev-relay.js",

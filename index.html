@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
     <meta name="theme-color" content="#6fb7e8" />
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛺</text></svg>" />
-    <title>Tuk Tuk Climb</title>
+    <title>Hill Rush</title>
     <link rel="stylesheet" href="/src/style.css" />
   </head>
   <body>
@@ -42,14 +42,107 @@
       <button id="nitro" class="nitro-btn" aria-label="Nitro"><span>NITRO</span><b id="nitro-count">0</b><i id="nitro-fill"></i></button>
     </div>
 
+    <section id="cover" class="cover" hidden>
+      <svg class="cover-scene" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <defs>
+          <linearGradient id="cv-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2fa6e6" /><stop offset="0.55" stop-color="#8fdcfa" /><stop offset="1" stop-color="#e2f7ff" /></linearGradient>
+          <linearGradient id="cv-rock" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#4f9a3e" /><stop offset="0.45" stop-color="#8fcf5e" /><stop offset="1" stop-color="#3d7f33" /></linearGradient>
+          <linearGradient id="cv-rock2" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#6fae86" /><stop offset="1" stop-color="#4f8f6c" /></linearGradient>
+          <linearGradient id="cv-dirt" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b9773f" /><stop offset="1" stop-color="#6e3f20" /></linearGradient>
+          <linearGradient id="cv-hill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7cc84f" /><stop offset="1" stop-color="#3f8a32" /></linearGradient>
+          <radialGradient id="cv-glow" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#fffbe0" /><stop offset="0.35" stop-color="#fff2a8" stop-opacity="0.9" /><stop offset="1" stop-color="#fff2a8" stop-opacity="0" /></radialGradient>
+        </defs>
+        <rect width="1600" height="900" fill="url(#cv-sky)" />
+        <g class="cv-rays" transform="translate(1300 140)">
+          <g fill="#ffffff" opacity="0.16">
+            <path d="M0 0 L-90 -1400 L90 -1400 Z" /><path d="M0 0 L-90 -1400 L90 -1400 Z" transform="rotate(30)" /><path d="M0 0 L-90 -1400 L90 -1400 Z" transform="rotate(60)" />
+            <path d="M0 0 L-90 -1400 L90 -1400 Z" transform="rotate(90)" /><path d="M0 0 L-90 -1400 L90 -1400 Z" transform="rotate(120)" /><path d="M0 0 L-90 -1400 L90 -1400 Z" transform="rotate(150)" />
+            <path d="M0 0 L-90 -1400 L90 -1400 Z" transform="rotate(180)" /><path d="M0 0 L-90 -1400 L90 -1400 Z" transform="rotate(210)" /><path d="M0 0 L-90 -1400 L90 -1400 Z" transform="rotate(240)" />
+            <path d="M0 0 L-90 -1400 L90 -1400 Z" transform="rotate(270)" /><path d="M0 0 L-90 -1400 L90 -1400 Z" transform="rotate(300)" /><path d="M0 0 L-90 -1400 L90 -1400 Z" transform="rotate(330)" />
+          </g>
+        </g>
+        <circle cx="1300" cy="140" r="210" fill="url(#cv-glow)" />
+        <g class="cv-clouds" fill="#ffffff">
+          <g opacity="0.95"><ellipse cx="420" cy="170" rx="120" ry="40" /><circle cx="380" cy="150" r="48" /><circle cx="450" cy="135" r="62" /></g>
+          <g opacity="0.85"><ellipse cx="980" cy="110" rx="90" ry="30" /><circle cx="955" cy="95" r="36" /><circle cx="1010" cy="85" r="46" /></g>
+          <g opacity="0.9"><ellipse cx="1500" cy="330" rx="110" ry="34" /><circle cx="1470" cy="312" r="40" /><circle cx="1530" cy="300" r="52" /></g>
+        </g>
+        <!-- distant misty mountains -->
+        <path d="M600 640 L760 470 L860 560 L1000 400 L1130 520 L1240 430 L1400 560 L1600 470 L1600 900 L600 900 Z" fill="#9fcde0" opacity="0.8" />
+        <!-- tall green rock pillars with bushes on their ledges -->
+        <g>
+          <path d="M120 900 C110 700 100 520 150 400 C175 330 260 300 320 340 C380 380 380 470 360 560 C345 640 350 780 360 900 Z" fill="url(#cv-rock)" />
+          <path d="M175 420 C200 370 250 360 285 380" stroke="#b6e98a" stroke-width="10" fill="none" stroke-linecap="round" opacity="0.7" />
+          <circle cx="160" cy="430" r="26" fill="#3f8f3a" /><circle cx="190" cy="415" r="30" fill="#5aae46" /><circle cx="330" cy="560" r="24" fill="#3f8f3a" /><circle cx="305" cy="548" r="20" fill="#6cc04f" />
+          <circle cx="140" cy="640" r="22" fill="#5aae46" /><circle cx="350" cy="700" r="26" fill="#3f8f3a" />
+          <path d="M470 900 C470 760 450 650 490 580 C515 540 570 530 600 560 C630 590 630 660 615 720 C605 780 610 850 615 900 Z" fill="url(#cv-rock2)" />
+          <circle cx="500" cy="600" r="20" fill="#4f9a3e" /><circle cx="525" cy="590" r="24" fill="#6cc04f" />
+        </g>
+        <!-- the landing hill, far right -->
+        <path d="M900 900 C1000 780 1150 720 1300 700 C1420 685 1520 700 1600 690 L1600 900 Z" fill="url(#cv-hill)" />
+        <path d="M900 900 C1000 780 1150 720 1300 700 C1420 685 1520 700 1600 690" stroke="#a8e46c" stroke-width="10" fill="none" />
+        <!-- pines -->
+        <g fill="#2c6b2c">
+          <path d="M1180 760 L1215 640 L1250 760 Z" /><path d="M1195 700 L1215 610 L1235 700 Z" /><rect x="1210" y="755" width="10" height="24" fill="#5a3a1e" />
+          <path d="M1390 730 L1430 600 L1470 730 Z" /><path d="M1405 670 L1430 570 L1455 670 Z" /><rect x="1425" y="725" width="10" height="26" fill="#5a3a1e" />
+          <path d="M1530 735 L1560 640 L1590 735 Z" />
+        </g>
+        <!-- the jump: a dirt ramp with a grassy top, bottom left -->
+        <path d="M0 720 C160 700 300 690 430 700 C520 707 600 690 690 640 L720 650 C700 720 690 800 700 900 L0 900 Z" fill="url(#cv-dirt)" />
+        <path d="M0 720 C160 700 300 690 430 700 C520 707 600 690 690 640" stroke="#6cc04f" stroke-width="22" fill="none" stroke-linecap="round" />
+        <path d="M0 712 C160 692 300 682 430 692 C520 699 600 682 690 632" stroke="#a8e46c" stroke-width="6" fill="none" stroke-linecap="round" />
+        <g fill="#5a3418" opacity="0.6"><circle cx="120" cy="790" r="14" /><circle cx="300" cy="830" r="20" /><circle cx="520" cy="780" r="12" /><circle cx="610" cy="850" r="18" /><circle cx="210" cy="870" r="10" /></g>
+        <g fill="#2c6b2c"><path d="M30 720 L70 590 L110 720 Z" /><path d="M45 660 L70 560 L95 660 Z" /></g>
+      </svg>
+      <div class="cv-dust"><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="cv-speed"><i></i><i></i><i></i></div>
+      <canvas id="cover-tuk" class="cover-tuk" width="900" height="600"></canvas>
+      <svg class="cv-can" viewBox="0 0 60 70" aria-hidden="true"><rect x="6" y="14" width="48" height="52" rx="8" fill="#d8262b" stroke="#7a1015" stroke-width="4" /><path d="M14 14 L22 4 L40 4 L44 14" fill="none" stroke="#7a1015" stroke-width="5" /><path d="M18 28 L42 52 M42 28 L18 52" stroke="#ff8a8e" stroke-width="5" /></svg>
+      <div class="cv-coins"><b>Rs</b><b>Rs</b><b>Rs</b><b>Rs</b><b>Rs</b></div>
+      <div class="cover-logo">
+        <h1><span class="l1">Hill</span><span class="l2">Rush!</span></h1>
+      </div>
+      <div class="cover-load">
+        <div class="bar"><i id="cover-fill"></i></div>
+        <b id="cover-pct">0%</b>
+        <small>v1.2</small>
+      </div>
+      <button id="cover-play" class="cover-play" hidden>Tap to play</button>
+      <button id="cover-settings" class="round-btn cover-gear" aria-label="Settings">⚙</button>
+    </section>
+
+    <section id="settings" class="scene-screen maps-screen" hidden>
+      <header class="topbar">
+        <button id="settings-back" class="btn ghost">‹ Back</button>
+        <h2>Settings</h2>
+        <span></span>
+      </header>
+      <div class="settings">
+        <label class="setting">
+          <span><b>🎵 Music</b><small id="set-music-v"></small></span>
+          <input id="set-music" type="range" min="0" max="100" step="5" />
+        </label>
+        <label class="setting">
+          <span><b>🔊 Sound effects</b><small id="set-sound-v"></small></span>
+          <input id="set-sound" type="range" min="0" max="100" step="5" />
+        </label>
+        <label class="setting">
+          <span><b>🕹️ Handling sensitivity</b><small id="set-tilt-v"></small></span>
+          <input id="set-tilt" type="range" min="50" max="150" step="5" />
+          <em class="range-ends"><i>Gentle</i><i>Normal</i><i>Twitchy</i></em>
+        </label>
+        <p class="settings-note">Sensitivity sets how hard gas and brake tilt your vehicle, on the ground and in the air.</p>
+      </div>
+    </section>
+
     <section id="home" class="scene-screen">
       <header class="topbar">
         <div class="pill"><span class="coin">Rs</span> <b class="js-coins">0</b></div>
         <div id="best-pill" class="pill"></div>
-        <button id="mute-btn" class="round-btn" aria-label="Toggle sound"></button>
+        <button id="settings-btn" class="round-btn" aria-label="Settings">⚙</button>
       </header>
       <div class="brand">
-        <h1>Tuk Tuk <span>Climb</span></h1>
+        <h1>Hill <span>Rush</span></h1>
         <p id="home-tag"></p>
       </div>
       <div id="home-slot" class="stage-slot">
@@ -163,6 +256,7 @@
         <h2>Paused</h2>
         <button id="resume-btn" class="big-btn">Resume</button>
         <button id="checkpoint-btn" class="link-btn" hidden>Back to last checkpoint</button>
+        <button id="pause-settings" class="link-btn">Settings</button>
         <button id="quit-btn" class="link-btn">Quit to home</button>
       </div>
     </section>

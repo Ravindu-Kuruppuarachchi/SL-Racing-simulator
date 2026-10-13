@@ -1,4 +1,4 @@
-# Tuk Tuk Climb 🛺
+# Hill Rush 🛺
 
 A Hill Climb Racing–style physics game: drive six real Sri Lankan routes, from the hill country
 (Kadugannawa → Nuwara Eliya → Ella …) to the Knuckles, the Kelani Valley and the ancient Rajarata,
@@ -21,6 +21,17 @@ turntable, buy it, and upgrade it. Hovering an upgrade previews its effect on th
 Each vehicle has its own upgrades (pricier vehicles cost more to upgrade). Launch control eases
 the engine when the nose lifts on the ground, so full gas won't flip you by itself. Holding gas
 in the air still will.
+
+## Cover, music and settings
+
+The app opens on a cover page (tap to play). Music is generated in code (`src/music.js`):
+a relaxed baila-style groove in the menus and an upbeat one while driving. The ⚙ button
+(on the cover, at home and in the pause menu) opens Settings: music volume, sound-effect
+(engine) volume, and handling sensitivity, which sets how hard gas and brake tilt the
+vehicle. Changes apply straight away, even mid-run.
+
+**Free ride** has fuel to manage and no nitro. **Race** has nitro bottles and no fuel: the
+tank never runs dry and there are no cans, for you or the rivals.
 
 ## Run
 

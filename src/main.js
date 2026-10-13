@@ -12,6 +12,7 @@ import { Lobby, MAX_PLAYERS, RELAY_URL, joinLink, newCode, parseCode } from './n
 import { RACE, Race, formatTime, nextPace, ordinal } from './race.js';
 import { Showroom } from './showroom.js';
 import { EngineSound } from './sound.js';
+import { Music } from './music.js';
 import { VEHICLES, getSkin, getVehicle, skinsOf, vehicleStats } from './vehicles.js';
 
 const $ = (id) => document.getElementById(id);
@@ -35,11 +36,15 @@ const RENAMED = { wagonr: 'hatchback', prius: 'hybrid', defender: 'jeep' };
 function load() {
   // paint: equipped skin per vehicle; paints: skins bought per vehicle (the factory paint is free)
   // mode: 'ride' (free ride) or 'race'; racing: per map { pace, wins, races, best } (see race.js)
-  const fresh = { coins: 0, bests: {}, muted: false, selected: 'tuktuk', owned: ['tuktuk'], ups: {}, map: 'hills', paint: {}, paints: {}, mode: 'ride', racing: {} };
+  // settings: music and sound volume (0-1), tilt: handling sensitivity (0.5-1.5)
+  const fresh = { coins: 0, bests: {}, settings: { music: 0.6, sound: 0.8, tilt: 1 }, selected: 'tuktuk', owned: ['tuktuk'], ups: {}, map: 'hills', paint: {}, paints: {}, mode: 'ride', racing: {} };
   try {
     const s = JSON.parse(localStorage.getItem(SAVE_KEY));
     if (!s) return fresh;
     const save = { ...fresh, ...s };
+    save.settings = { ...fresh.settings, ...s.settings };
+    if (s.muted && !s.settings) save.settings.music = save.settings.sound = 0; // the old mute button
+    delete save.muted;
     if (s.up && !s.ups) save.ups = { tuktuk: s.up }; // saves from before vehicles existed
     delete save.up;
     if (s.best && !s.bests) save.bests = { hills: s.best }; // saves from before maps existed
@@ -59,7 +64,8 @@ const bestOf = (map) => save.bests[map] ?? 0;
 const skinOf = (id) => getSkin(id, save.paint[id]);
 const ownsSkin = (id, skinId) => skinsOf(id)[0].id === skinId || (save.paints[id] ?? []).includes(skinId);
 function newGame(id = save.selected) {
-  const g = new Game(id, upgradesOf(id), undefined, save.map);
+  // free ride: fuel to manage, no nitro
+  const g = new Game(id, upgradesOf(id), undefined, save.map, { nitro: false, tilt: save.settings.tilt });
   g.skin = skinOf(id); // read by the renderer
   return g;
 }
@@ -97,6 +103,9 @@ const racingOf = (map) => (save.racing[map] ??= { pace: RACE.startPace, wins: 0,
 const renderer = new Renderer($('game'));
 const showroom = new Showroom($('stage'));
 const sound = new EngineSound();
+const music = new Music();
+music.volume = save.settings.music;
+let settingsFrom = 'home'; // the screen the settings page goes back to
 const input = { gas: false, brake: false, nitro: false };
 let game = newGame();
 let race = null; // the race in progress (race mode), whose player game is `game`
@@ -121,7 +130,9 @@ function onKey(e, down) {
     }
   }
   if (down && (e.code === 'Escape' || e.code === 'KeyP')) togglePause();
+  if (down && e.code === 'Enter' && mode === 'cover' && !e.repeat) return leaveCover();
   if (down && e.code === 'Enter' && (mode === 'home' || mode === 'over') && !e.repeat) startRun();
+  if (down && e.code === 'Escape' && mode === 'settings') show(settingsFrom);
   if (down && e.code === 'Escape' && (mode === 'garage' || mode === 'maps')) show('home');
   if (down && e.code === 'Escape' && mode === 'lobby') $('lobby-back').onclick();
   if (mode === 'home' || mode === 'garage') {
@@ -159,8 +170,10 @@ function show(next) {
     lobby.close(); // left the online race for the menus
     lobby = null;
   }
-  for (const id of ['home', 'garage', 'maps', 'lobby', 'pause', 'over']) $(id).hidden = id !== next;
-  $('hud').hidden = MENUS.includes(next);
+  for (const id of ['cover', 'home', 'garage', 'maps', 'lobby', 'pause', 'over', 'settings']) $(id).hidden = id !== next;
+  $('hud').hidden = MENUS.includes(next) || next === 'cover';
+  if (next === 'play') music.play('drive');
+  else if (next !== 'pause' && next !== 'settings') music.play('menu');
   $('controls').hidden = next !== 'play';
   $('race-hud').hidden = !race;
   $('countdown').hidden = true;
@@ -217,7 +230,6 @@ function renderHome() {
   $('map-name').textContent = map.name;
   $('map-route').textContent = map.route;
   if (showroom.ok) showroom.setTheme(save.map);
-  $('mute-btn').textContent = save.muted ? '🔇' : '🔊';
   $('home-name').textContent = v.name;
   const total = Object.values(up).reduce((a, b) => a + b, 0);
   $('home-levels').textContent = `${v.blurb} · upgrades ${total}/${UPGRADES.length * MAX_LEVEL}`;
@@ -437,7 +449,7 @@ function startRun() {
     save.mode === 'race'
       ? new Race({
           mapId: save.map,
-          player: { vehicleId: save.selected, upgrades: upgradesOf(save.selected), skin: skinOf(save.selected) },
+          player: { vehicleId: save.selected, upgrades: upgradesOf(save.selected), skin: skinOf(save.selected), tilt: save.settings.tilt },
           pace: racingOf(save.map).pace,
           ghost: ghosts[save.map],
         })
@@ -447,7 +459,7 @@ function startRun() {
 
 // Start driving: `race` is the race to run, or null for free ride.
 function launch() {
-  sound.unlock(save.muted);
+  unlockAudio();
   sound.setVehicle(save.selected);
   game = race ? race.player.game : newGame();
   if (race) buildRaceTrack();
@@ -612,7 +624,7 @@ function startOnlineRace() {
   if (!me) return;
   race = new Race({
     mapId: lobby.map,
-    player: { vehicleId: save.selected, upgrades: upgradesOf(save.selected), skin: skinOf(save.selected) },
+    player: { vehicleId: save.selected, upgrades: upgradesOf(save.selected), skin: skinOf(save.selected), tilt: save.settings.tilt },
     online: { players: lobby.players.map((p, i) => ({ ...p, label: playerLabel(i) })), me: lobby.id, clock: () => performance.now() / 1000 },
   });
   launch();
@@ -661,10 +673,10 @@ function renderLobby() {
 
 async function shareRace() {
   const url = joinLink(lobby.code);
-  const text = `Race me in Tuk Tuk Climb! Race code ${lobby.code}`;
+  const text = `Race me in Hill Rush! Race code ${lobby.code}`;
   try {
-    if (Capacitor.isNativePlatform()) await Share.share({ title: 'Tuk Tuk Climb race', text, url });
-    else if (navigator.share) await navigator.share({ title: 'Tuk Tuk Climb race', text, url });
+    if (Capacitor.isNativePlatform()) await Share.share({ title: 'Hill Rush race', text, url });
+    else if (navigator.share) await navigator.share({ title: 'Hill Rush race', text, url });
     else {
       await navigator.clipboard.writeText(`${text}: ${url}`);
       $('share-btn').textContent = 'Link copied ✓';
@@ -804,12 +816,84 @@ $('mode-pick').addEventListener('click', (e) => {
 });
 $('pause-btn').onclick = togglePause;
 $('resume-btn').onclick = togglePause;
-$('mute-btn').onclick = () => {
-  save.muted = !save.muted;
-  sound.setMuted(save.muted);
-  persist();
-  renderHome();
+// ---- cover and settings ----------------------------------------------------------
+function unlockAudio() {
+  sound.unlock(save.settings.sound <= 0);
+  sound.setVolume(save.settings.sound);
+  music.unlock();
+}
+// The cover's loading bar: fills while the fonts and the 3D garage get ready, then "Tap to play".
+let coverReady = false;
+function loadCover() {
+  const start = performance.now();
+  let ready = false;
+  Promise.all([document.fonts?.ready, new Promise((r) => setTimeout(r, 300))]).then(() => (ready = true));
+  const tick = () => {
+    const t = (performance.now() - start) / 1800; // at least ~2 s, so the splash is seen
+    const pct = Math.min(ready ? 100 : 92, Math.round(100 * (1 - (1 - Math.min(t, 1)) ** 2)));
+    $('cover-fill').style.width = `${pct}%`;
+    $('cover-pct').textContent = `${pct}%`;
+    if (pct < 100) return requestAnimationFrame(tick);
+    coverReady = true;
+    document.querySelector('.cover-load').hidden = true;
+    $('cover-play').hidden = false;
+  };
+  tick();
+}
+
+function leaveCover() {
+  if (mode !== 'cover' || !coverReady) return;
+  unlockAudio(); // the first tap: browsers and phones only start audio after one
+  show('home');
+}
+$('cover').addEventListener('click', (e) => {
+  if (!e.target.closest('#cover-settings')) leaveCover();
+});
+$('cover-settings').onclick = () => {
+  unlockAudio();
+  openSettings('cover');
 };
+$('settings-btn').onclick = () => openSettings('home');
+$('pause-settings').onclick = () => openSettings('pause');
+$('settings-back').onclick = () => show(settingsFrom);
+
+function openSettings(from) {
+  settingsFrom = from;
+  renderSettings();
+  show('settings');
+}
+function renderSettings() {
+  const st = save.settings;
+  $('set-music').value = Math.round(st.music * 100);
+  $('set-sound').value = Math.round(st.sound * 100);
+  $('set-tilt').value = Math.round(st.tilt * 100);
+  $('set-music-v').textContent = st.music > 0 ? `${Math.round(st.music * 100)}%` : 'Off';
+  $('set-sound-v').textContent = st.sound > 0 ? `${Math.round(st.sound * 100)}%` : 'Off';
+  $('set-tilt-v').textContent = `${Math.round(st.tilt * 100)}%`;
+}
+$('set-music').oninput = (e) => {
+  save.settings.music = e.target.value / 100;
+  music.setVolume(save.settings.music);
+  renderSettings();
+  persist();
+};
+$('set-sound').oninput = (e) => {
+  save.settings.sound = e.target.value / 100;
+  sound.setVolume(save.settings.sound);
+  renderSettings();
+  persist();
+};
+$('set-tilt').oninput = (e) => {
+  save.settings.tilt = e.target.value / 100;
+  game.tiltScale = save.settings.tilt; // takes effect straight away, even mid-run
+  if (race) race.player.game.tiltScale = save.settings.tilt;
+  renderSettings();
+  persist();
+};
+
+function drawCover() {
+  drawVehicleThumb($('cover-tuk'), getVehicle(save.selected), skinOf(save.selected));
+}
 document.addEventListener('visibilitychange', () => {
   if (document.hidden && mode === 'play') togglePause();
   if (!document.hidden) lobby?.wake(); // back from another app: rejoin the race room straight away
@@ -822,6 +906,7 @@ if (Capacitor.isNativePlatform()) {
     if (mode === 'play' || mode === 'pause') togglePause();
     else if (mode === 'lobby') $('lobby-back').onclick();
     else if (mode === 'over' && lobby) backToLobby();
+    else if (mode === 'settings') show(settingsFrom);
     else if (mode === 'garage' || mode === 'maps' || mode === 'over') show('home');
     else NativeApp.exitApp();
   });
@@ -829,6 +914,9 @@ if (Capacitor.isNativePlatform()) {
 
 // ---- HUD -------------------------------------------------------------------
 function updateHud() {
+  // free ride has fuel and no nitro; races have nitro and no fuel
+  document.querySelector('#hud .fuel').hidden = !game.useFuel;
+  $('nitro').hidden = !game.useNitro;
   const pct = (game.fuel / game.stats.tank) * 100;
   const fill = $('fuel-fill');
   fill.style.width = `${pct}%`;
@@ -884,7 +972,7 @@ function frame() {
     else if (!race && game.over) endRun();
   }
 
-  if (mode === 'maps' || mode === 'lobby') {
+  if (mode === 'maps' || mode === 'lobby' || mode === 'cover' || mode === 'settings') {
     // the map page is opaque: nothing to draw behind it
   } else if (MENUS.includes(mode) && showroom.ok) showroom.render(dt);
   else {
@@ -894,7 +982,9 @@ function frame() {
   requestAnimationFrame(frame);
 }
 
-show('home');
+drawCover();
+loadCover();
+show(new URLSearchParams(location.search).get('join') ? 'home' : 'cover');
 requestAnimationFrame(frame);
 openRaceLink(new URLSearchParams(location.search).get('join') && `join/${new URLSearchParams(location.search).get('join')}`); // web: ?join=CODE
 

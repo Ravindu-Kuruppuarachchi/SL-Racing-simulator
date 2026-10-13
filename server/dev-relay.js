@@ -17,7 +17,7 @@ export function startRelay(port = 8787, { grace } = {}) {
       res.end(joinPage(code.toUpperCase(), `http://${req.headers.host}${url.pathname}`));
     } else {
       res.writeHead(200, { 'content-type': 'text/plain' });
-      res.end('Tuk Tuk Climb race relay (dev)');
+      res.end('Hill Rush race relay (dev)');
     }
   });
   const wss = new WebSocketServer({ noServer: true });

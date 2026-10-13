@@ -12,7 +12,7 @@ export function joinPage(code, pageUrl) {
     ? `<h1>Join my race!</h1>
       <p>Race code</p>
       <div class="code">${code}</div>
-      <a class="btn" href="${intent}">Open Tuk Tuk Climb</a>
+      <a class="btn" href="${intent}">Open Hill Rush</a>
       <p class="small">No luck? Open the app, choose <b>Race → Race friends → Join</b> and type the code.</p>
       <script>if (!location.search.includes('noapp') && /Android/i.test(navigator.userAgent)) location.href = ${JSON.stringify(intent)};</script>`
     : '<h1>That link looks broken</h1><p>Ask your friend for the race code.</p>';
@@ -21,7 +21,7 @@ export function joinPage(code, pageUrl) {
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Tuk Tuk Climb race</title>
+<title>Hill Rush race</title>
 <style>
   :root { color-scheme: light; }
   body { margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 16px; box-sizing: border-box;

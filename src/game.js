@@ -18,7 +18,15 @@ const WATER_DRAG = 2; // per second, per metre of water depth
 export const NITRO = { time: 2.5, max: 3, thrust: 16, ramp: 8, launch: 10, lift: 3, topSpeed: 38, steady: 4, level: 70, settle: 0.7, calm: 12, spinCap: 2.5, fullBonus: 25 };
 
 export class Game {
-  constructor(vehicleId, upgrades, seed = Math.floor(Math.random() * 1e9), mapId = 'hills') {
+  /**
+   * opts: { nitro: false } leaves out the nitro bottles (free ride), { fuel: false } the fuel
+   * (races: the tank never runs dry and there are no cans), tilt: how strongly gas and brake
+   * lean the vehicle (the handling sensitivity setting, 1 = normal).
+   */
+  constructor(vehicleId, upgrades, seed = Math.floor(Math.random() * 1e9), mapId = 'hills', { nitro = true, fuel = true, tilt = 1 } = {}) {
+    this.useNitro = nitro;
+    this.useFuel = fuel;
+    this.tiltScale = tilt;
     this.vehicle = getVehicle(vehicleId);
     this.stats = vehicleStats(this.vehicle, upgrades);
     this.seed = seed;
@@ -122,14 +130,14 @@ export class Game {
       }
       this.nextCoinX += 35 + this.rand() * 45;
     }
-    while (this.nextFuelX < x1) {
+    while (this.useFuel && this.nextFuelX < x1) {
       const x = this.nextFuelX;
       this.fuels.push({ x, y: this.surface(x) + 1.0, taken: false });
       this.fuelGap += 25;
       this.nextFuelX += this.fuelGap;
     }
     const nitroAt = (x) => this.nitros.push({ x, y: this.surface(x) + 1.1, taken: false });
-    while (this.nextNitroX < x1) {
+    while (this.useNitro && this.nextNitroX < x1) {
       nitroAt(this.nextNitroX);
       this.nextNitroX += 110 + this.nitroRand() * 130;
     }
@@ -137,7 +145,7 @@ export class Game {
     for (const s of this.terrain.sections) {
       if (s.type !== 'kicker' || s.nitro !== undefined || s.x0 >= x1) continue;
       const x = s.x0 - 22;
-      s.nitro = x > 40 && this.nitroRand() < 0.5 && !this.nitros.some((n) => Math.abs(n.x - x) < 30);
+      s.nitro = this.useNitro && x > 40 && this.nitroRand() < 0.5 && !this.nitros.some((n) => Math.abs(n.x - x) < 30);
       if (s.nitro) nitroAt(x);
     }
   }
@@ -248,7 +256,7 @@ export class Game {
     const gas = input.gas && hasFuel;
     const brake = input.brake && hasFuel;
 
-    if (input.nitro && !this.nitroHeld && this.nitroCharges > 0 && this.boost <= 0) {
+    if (this.useNitro && input.nitro && !this.nitroHeld && this.nitroCharges > 0 && this.boost <= 0) {
       this.nitroCharges--;
       this.boost = NITRO.time;
       this.say('NITRO!');
@@ -267,7 +275,7 @@ export class Game {
     }
 
     // Hill Climb style tilt control: gas leans back, brake leans forward.
-    const tilt = this.vehicle.tilt[this.wheelContacts > 0 ? 0 : 1];
+    const tilt = this.vehicle.tilt[this.wheelContacts > 0 ? 0 : 1] * this.tiltScale;
     if (gas) this.chassis.applyTorque(tilt * throttle);
     if (brake) this.chassis.applyTorque(-tilt);
 
@@ -276,7 +284,7 @@ export class Game {
     this.world.step(STEP, 8, 3);
 
     // fuel
-    this.fuel = Math.max(0, this.fuel - STEP * (gas ? 3.2 : 1.6) * this.vehicle.fuelUse);
+    if (this.useFuel) this.fuel = Math.max(0, this.fuel - STEP * (gas ? 3.2 : 1.6) * this.vehicle.fuelUse);
 
     const pos = this.chassis.getPosition();
     this.ensureTerrain(pos.x + 120);

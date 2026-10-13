@@ -14,6 +14,7 @@ export class EngineSound {
   constructor() {
     this.ctx = null;
     this.muted = false;
+    this.volume = 1;
     this.profile = PROFILES.tuktuk;
   }
 
@@ -49,6 +50,12 @@ export class EngineSound {
     this.lfo.start();
   }
 
+  /** Engine volume from the settings (0-1; 0 is off). */
+  setVolume(v) {
+    this.volume = v;
+    this.setMuted(v <= 0);
+  }
+
   setMuted(muted) {
     this.muted = muted;
     if (muted) this.setLevel(0, false);
@@ -63,7 +70,8 @@ export class EngineSound {
     this.osc.frequency.setTargetAtTime(p.base + rpm * p.range + (throttle ? p.base * 0.3 : 0), t, 0.08);
     this.lfo.frequency.setTargetAtTime(p.putt + rpm * p.putt * 2, t, 0.08);
     this.filter.frequency.setTargetAtTime(p.tone, t, 0.1);
-    this.gain.gain.setTargetAtTime(on ? (throttle ? 0.05 : 0.025) * p.volume : 0, t, 0.1);
-    this.lfoGain.gain.setTargetAtTime(on ? 0.02 * p.volume * p.chop : 0, t, 0.1);
+    const vol = p.volume * this.volume * 1.25;
+    this.gain.gain.setTargetAtTime(on ? (throttle ? 0.05 : 0.025) * vol : 0, t, 0.1);
+    this.lfoGain.gain.setTargetAtTime(on ? 0.02 * vol * p.chop : 0, t, 0.1);
   }
 }
